@@ -2,7 +2,7 @@
 
 
 def get_version() -> str:
-    return "5.0.0"
+    return "5.1.0"
 
 
 def greet(name: str) -> str:
