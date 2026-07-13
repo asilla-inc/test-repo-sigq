@@ -26,5 +26,7 @@ main:      v4.6.3 ──► v5.0 ──► v5.0.1 ──► v5.1
   **auto-rebased** onto `main` every time `main` moves, instead of merging
   `main` back into it.
 
-See `STRATEGY_NOTES.md` for the write-up of strengths/gaps discovered while
-exercising this.
+See `DEMONSTRATION.md` for the full, reproducible, command-by-command
+walkthrough of this exact flow (green branches → orange branch auto-rebase →
+final integration), and `STRATEGY_NOTES.md` for the strengths/gaps analysis
+discovered while exercising it.
