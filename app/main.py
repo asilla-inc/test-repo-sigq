@@ -2,10 +2,12 @@
 
 
 def get_version() -> str:
-    return "5.0.0-dev"
+    return "5.0.0"
 
 
 def greet(name: str) -> str:
+    # hotfix: guard against empty name (dummy bug fix)
+    name = name or "anonymous"
     return f"Hello, {name}! Running v{get_version()}."
 
 
