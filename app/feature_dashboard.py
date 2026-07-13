@@ -3,3 +3,7 @@
 
 def render_dashboard() -> str:
     return "dummy-dashboard-v5.1"
+
+
+def render_widget_count() -> int:
+    return 3
