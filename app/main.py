@@ -7,8 +7,9 @@ def get_version() -> str:
 
 def greet(name: str) -> str:
     # hotfix: guard against empty name (dummy bug fix)
+    # v5.1: friendlier greeting copy
     name = name or "anonymous"
-    return f"Hello, {name}! Running v{get_version()}."
+    return f"Hi there, {name}! (v{get_version()})"
 
 
 if __name__ == "__main__":
