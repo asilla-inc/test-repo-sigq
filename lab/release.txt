@@ -1,2 +1,2 @@
 v6.0 base
-shared line
+shared line HOTFIXED IN 6.0
