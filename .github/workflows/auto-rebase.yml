@@ -1,0 +1,59 @@
+# Auto Rebase — Git Policy v1.2 §2f. Copy to .github/workflows/auto-rebase.yml,
+# with auto-rebase.sh + auto-rebase-notify.sh in .github/scripts/.
+# Every push to main or dev/** re-checks all open dev/<version> branches and rebases
+# each onto its parent (nearest lower open dev/<version>, else main).
+name: auto-rebase
+
+on:
+  push:
+    branches: [main, "dev/**"]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Report only, do not push"
+        type: boolean
+        default: false
+
+# One run at a time per repo; queued runs re-read fresh state, so none are lost.
+concurrency:
+  group: auto-rebase
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebase open dev/<version> branches
+        id: rebase
+        env:
+          REPORT: ${{ runner.temp }}/auto-rebase.tsv
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: |
+          cp .github/scripts/auto-rebase*.sh "$RUNNER_TEMP/"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          set +e
+          bash "$RUNNER_TEMP/auto-rebase.sh"
+          echo "rc=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Report
+        if: always()
+        env:
+          REPORT: ${{ runner.temp }}/auto-rebase.tsv
+          GH_TOKEN: ${{ github.token }}
+        run: bash "$RUNNER_TEMP/auto-rebase-notify.sh"
+
+      - name: Fail on conflict
+        if: steps.rebase.outputs.rc != '0'
+        run: |
+          echo "::error::Auto Rebase hit a conflict or rejected push — see the auto-rebase issue."
+          exit 1
